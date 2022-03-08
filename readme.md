@@ -73,6 +73,6 @@ parser.exec(new String[]{"--username", "Verlif", "--commit", "hello world", "--a
 > Gradle
 > ```text
 > dependencies {
->   implementation 'com.github.Verlif:param-parser:1.0'
+>   implementation 'com.github.Verlif:cmdline-parser:1.0'
 > }
 > ```
