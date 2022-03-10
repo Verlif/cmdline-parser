@@ -19,7 +19,9 @@
 String line = "--username Verlif --commit \"hello world!\" --allowed";
 CmdlineParser parser = new CmdlineParser("--");
 // 忽略未知命令，否则会抛出UnknownCmdKeyException异常
-parser.ignoredUnknownKey();
+parser.ignoreUnknownKey();
+// 忽略关键词大小写，可以让"--KEy"也能匹配到"key"
+parser.ignoreCase();
 // 添加指令执行器
 parser.addHandler("username", UsernameCmd);
 parser.addHandler("allowed", AllowedCmd);
@@ -33,6 +35,14 @@ parser.exec(new String[]{"--username", "Verlif", "--commit", "hello world", "--a
 
 1. `UsernameCmd`的`handle`方法，带有参数`Verlif`。
 2. `AllowedCmd`的`handle`方法，参数为`null`。
+
+## 注意
+
+指令调用的顺序与关键词的传入顺序有关。
+
+例如`--a 123 --b 321 --a 789`就会调用以下流程：
+
+> `a`执行器 -> `b`执行器 -> `a`执行器
 
 ## 添加依赖
 
@@ -65,7 +75,7 @@ parser.exec(new String[]{"--username", "Verlif", "--commit", "hello world", "--a
 >        <dependency>
 >            <groupId>com.github.Verlif</groupId>
 >            <artifactId>cmdline-parser</artifactId>
->            <version>1.0</version>
+>            <version>1.1</version>
 >        </dependency>
 >    </dependencies>
 > ```
@@ -73,6 +83,6 @@ parser.exec(new String[]{"--username", "Verlif", "--commit", "hello world", "--a
 > Gradle
 > ```text
 > dependencies {
->   implementation 'com.github.Verlif:cmdline-parser:1.0'
+>   implementation 'com.github.Verlif:cmdline-parser:1.1'
 > }
 > ```
