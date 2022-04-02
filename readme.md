@@ -75,7 +75,7 @@ parser.exec(new String[]{"--username", "Verlif", "--commit", "hello world", "--a
 >        <dependency>
 >            <groupId>com.github.Verlif</groupId>
 >            <artifactId>cmdline-parser</artifactId>
->            <version>1.1</version>
+>            <version>1.2</version>
 >        </dependency>
 >    </dependencies>
 > ```
@@ -83,6 +83,6 @@ parser.exec(new String[]{"--username", "Verlif", "--commit", "hello world", "--a
 > Gradle
 > ```text
 > dependencies {
->   implementation 'com.github.Verlif:cmdline-parser:1.1'
+>   implementation 'com.github.Verlif:cmdline-parser:1.2'
 > }
 > ```

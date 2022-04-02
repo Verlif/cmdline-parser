@@ -75,6 +75,11 @@ public class CmdlineParser {
         return handlerMap.keySet();
     }
 
+    /**
+     * 执行指令
+     *
+     * @param args 指令参数集
+     */
     public void exec(String[] args) {
         for (int i = 0; i < args.length; i++) {
             String key = getKeyFromArg(args[i]);
@@ -110,8 +115,51 @@ public class CmdlineParser {
         return null;
     }
 
+    /**
+     * 执行指令行
+     *
+     * @param cmdline 指令行
+     */
     public void exec(String cmdline) {
         exec(lineToArray(cmdline));
+    }
+
+    /**
+     * 解析指令行
+     *
+     * @param line 指令行
+     * @return 指令参数
+     */
+    public ArgValues parser(String line) {
+        return parser(lineToArray(line));
+    }
+
+    /**
+     * 解析指令行
+     *
+     * @param args 指令参数集
+     * @return 指令参数
+     */
+    public ArgValues parser(String[] args) {
+        ArgValues argValues = new ArgValues();
+        for (int i = 0; i < args.length; i++) {
+            String key = getKeyFromArg(args[i]);
+            if (key == null) {
+                continue;
+            }
+            int next = i + 1;
+            if (next == args.length) {
+                argValues.add(key, null);
+            } else {
+                if (getKeyFromArg(args[next]) == null) {
+                    argValues.add(key, args[next]);
+                    i++;
+                } else {
+                    argValues.add(key, null);
+                }
+            }
+        }
+        return argValues;
     }
 
     /**
