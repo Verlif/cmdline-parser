@@ -46,43 +46,45 @@ parser.exec(new String[]{"--username", "Verlif", "--commit", "hello world", "--a
 
 ## 添加依赖
 
+[![Release](https://jitpack.io/v/Verlif/cmdline-parser.svg)](https://jitpack.io/#Verlif/cmdline-parser)
+
 1. 添加Jitpack仓库源
 
-> maven
-> ```xml
-> <repositories>
->    <repository>
->        <id>jitpack.io</id>
->        <url>https://jitpack.io</url>
->    </repository>
-> </repositories>
-> ```
+    maven
+    ```xml
+    <repositories>
+           <repository>
+               <id>jitpack.io</id>
+               <url>https://jitpack.io</url>
+           </repository>
+    </repositories>
+    ```
 
-> Gradle
-> ```text
-> allprojects {
->   repositories {
->       maven { url 'https://jitpack.io' }
->   }
-> }
-> ```
+    Gradle
+    ```text
+    allprojects {
+      repositories {
+          maven { url 'https://jitpack.io' }
+      }
+    }
+    ```
 
 2. 添加依赖
 
-> maven
-> ```xml
->    <dependencies>
->        <dependency>
->            <groupId>com.github.Verlif</groupId>
->            <artifactId>cmdline-parser</artifactId>
->            <version>1.2</version>
->        </dependency>
->    </dependencies>
-> ```
+    maven
+    ```xml
+      <dependencies>
+              <dependency>
+                  <groupId>com.github.Verlif</groupId>
+                  <artifactId>cmdline-parser</artifactId>
+                  <version>1.3</version>
+              </dependency>
+          </dependencies>
+    ```
 
-> Gradle
-> ```text
-> dependencies {
->   implementation 'com.github.Verlif:cmdline-parser:1.2'
-> }
-> ```
+    Gradle
+    ```text
+    dependencies {
+      implementation 'com.github.Verlif:cmdline-parser:1.2'
+    }
+    ```

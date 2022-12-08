@@ -1,14 +1,12 @@
 package idea.verlif.parser.cmdline;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
 /**
  * @author Verlif
  * @version 1.0
- * @date 2022/4/2 14:42
  */
 public class ArgValues implements Iterable<String> {
 
@@ -25,12 +23,12 @@ public class ArgValues implements Iterable<String> {
         return keys.listIterator();
     }
 
-    public void add(String key, String value) {
+    public synchronized void add(String key, String value) {
         keys.add(key);
         values.add(value);
     }
 
-    public void remove(String key) {
+    public synchronized void remove(String key) {
         int i = keys.indexOf(key);
         if (i > -1) {
             keys.remove(i);
@@ -38,7 +36,16 @@ public class ArgValues implements Iterable<String> {
         }
     }
 
-    public String get(String key) {
+    public synchronized void remove(int index) {
+        keys.remove(index);
+        values.remove(index);
+    }
+
+    public String getKey(int index) {
+        return keys.get(index);
+    }
+
+    public String getValue(String key) {
         int i = keys.indexOf(key);
         if (i > -1) {
             return values.get(i);
@@ -47,7 +54,7 @@ public class ArgValues implements Iterable<String> {
         }
     }
 
-    public String get(int index) {
+    public String getValue(int index) {
         return values.get(index);
     }
 
@@ -63,7 +70,7 @@ public class ArgValues implements Iterable<String> {
             for (int i = 0; i < keys.size(); i++) {
                 String key = keys.get(i);
                 sb.append("{\"key\":\"").append(key).append("\",\"value\":");
-                String value = get(i);
+                String value = getValue(i);
                 if (value == null) {
                     sb.append("null");
                 } else {
@@ -78,4 +85,5 @@ public class ArgValues implements Iterable<String> {
             return "ArgValues[]";
         }
     }
+
 }
