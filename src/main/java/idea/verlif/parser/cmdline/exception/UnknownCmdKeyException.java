@@ -1,4 +1,4 @@
-package idea.verlif.parser.cmdline;
+package idea.verlif.parser.cmdline.exception;
 
 /**
  * @author Verlif

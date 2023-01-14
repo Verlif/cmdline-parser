@@ -41,6 +41,11 @@ public class ArgValues implements Iterable<String> {
         values.remove(index);
     }
 
+    public synchronized void append(ArgValues argValues) {
+        this.keys.addAll(argValues.keys);
+        this.values.addAll(argValues.values);
+    }
+
     public String getKey(int index) {
         return keys.get(index);
     }

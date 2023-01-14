@@ -1,5 +1,8 @@
 package idea.verlif.parser.cmdline;
 
+import idea.verlif.parser.cmdline.exception.NoArgParserException;
+import idea.verlif.parser.cmdline.exception.UnknownCmdKeyException;
+
 import java.util.*;
 
 /**
@@ -9,14 +12,11 @@ import java.util.*;
 public class CmdlineParser {
 
     /**
-     * 指令前缀
-     */
-    private final String prefix;
-
-    /**
      * 指令Map
      */
     private final Map<String, CmdHandler> handlerMap;
+
+    private ArgParser argParser;
 
     /**
      * 忽略未知指令
@@ -28,9 +28,12 @@ public class CmdlineParser {
      */
     private boolean ignoreCase = false;
 
-    public CmdlineParser(String prefix) {
-        this.prefix = prefix;
+    public CmdlineParser() {
         this.handlerMap = new HashMap<>();
+    }
+
+    public void setArgParser(ArgParser argParser) {
+        this.argParser = argParser;
     }
 
     public void addHandler(String key, CmdHandler handler) {
@@ -75,129 +78,65 @@ public class CmdlineParser {
     }
 
     /**
-     * 执行指令
+     * 执行指令<br>
+     * 由于Map的遍历顺序无法控制，所以如果需要控制指令执行顺序的话，建议使用{@link #exec(ArgValues)}
      *
-     * @param args 指令参数集
+     * @param paramMap 指令参数集
      */
-    public void exec(String[] args) {
-        for (int i = 0; i < args.length; i++) {
-            String key = getKeyFromArg(args[i]);
-            if (key != null) {
-                key = transKey(key);
-                CmdHandler handler = handlerMap.get(key);
-                if (handler != null) {
-                    int next = i + 1;
-                    if (next == args.length) {
-                        handler.handle(null);
-                    } else {
-                        if (getKeyFromArg(args[next]) == null) {
-                            handler.handle(args[next]);
-                            i++;
-                        } else {
-                            handler.handle(null);
-                        }
-                    }
-                } else if (!ignoreUnknownKey) {
-                    throw new UnknownCmdKeyException(key);
-                }
-            }
+    public void exec(Map<String, String> paramMap) {
+        ArgValues argValues = new ArgValues();
+        for (Map.Entry<String, String> entry : paramMap.entrySet()) {
+            argValues.add(entry.getKey(), entry.getValue());
         }
-    }
-
-    private String getKeyFromArg(String arg) {
-        if (arg.startsWith(prefix)) {
-            String key = arg.substring(prefix.length());
-            if (key.length() > 0) {
-                return key;
-            }
-        }
-        return null;
+        exec(argValues);
     }
 
     /**
-     * 执行指令行
+     * 通过参数解析器解析后执行指令行
      *
      * @param cmdline 指令行
      */
     public void exec(String cmdline) {
-        exec(lineToArray(cmdline));
+        // 检测参数解析器
+        if (argParser == null) {
+            throw new NoArgParserException();
+        }
+        // 检测指令行格式
+        if (cmdline == null) {
+            return;
+        }
+        cmdline = cmdline.trim();
+        if (cmdline.length() == 0) {
+            return;
+        }
+        ArgValues argValues = argParser.parseLine(cmdline.trim());
+        exec(argValues);
     }
 
     /**
-     * 解析指令行
+     * 执行参数值对象
      *
-     * @param line 指令行
-     * @return 指令参数
+     * @param argValues 参数值对象
      */
-    public ArgValues parser(String line) {
-        return parser(lineToArray(line));
-    }
-
-    /**
-     * 解析指令行
-     *
-     * @param args 指令参数集
-     * @return 指令参数
-     */
-    public ArgValues parser(String[] args) {
-        ArgValues argValues = new ArgValues();
-        for (int i = 0; i < args.length; i++) {
-            String key = getKeyFromArg(args[i]);
-            if (key == null) {
-                continue;
-            }
-            int next = i + 1;
-            if (next == args.length) {
-                argValues.add(key, null);
-            } else {
-                if (getKeyFromArg(args[next]) == null) {
-                    argValues.add(key, args[next]);
-                    i++;
-                } else {
-                    argValues.add(key, null);
+    public void exec(ArgValues argValues) {
+        // 检查指令集
+        if (!ignoreUnknownKey) {
+            for (String key : argValues) {
+                if (!handlerMap.containsKey(key)) {
+                    throw new UnknownCmdKeyException(key);
                 }
             }
         }
-        return argValues;
-    }
-
-    /**
-     * 将一行数据转换成指令参数数组
-     *
-     * @param line 行字符串
-     * @return 指令参数数组
-     */
-    public String[] lineToArray(String line) {
-        ArrayList<String> list = new ArrayList<>();
-        boolean isOneParam = false;
-        StringBuilder sb = new StringBuilder();
-        for (char c : line.toCharArray()) {
-            if (isOneParam) {
-                if (c == '\"') {
-                    isOneParam = false;
-                    list.add(sb.toString());
-                    sb.delete(0, sb.length());
-                } else {
-                    sb.append(c);
-                }
-            } else {
-                if (c == '\"') {
-                    isOneParam = true;
-                } else if (c == ' ') {
-                    if (sb.length() > 0) {
-                        list.add(sb.toString());
-                        sb.delete(0, sb.length());
-                    }
-                } else {
-                    sb.append(c);
+        for (int i = 0, size = argValues.size(); i < size; i++) {
+            String key = argValues.getKey(i);
+            if (key != null) {
+                key = transKey(key);
+                CmdHandler handler = handlerMap.get(key);
+                if (handler != null) {
+                    handler.handle(argValues.getValue(i));
                 }
             }
         }
-        if (sb.length() > 0) {
-            list.add(sb.toString());
-            sb.delete(0, sb.length());
-        }
-        return list.toArray(new String[]{});
     }
 
     private String transKey(String key) {
@@ -206,4 +145,5 @@ public class CmdlineParser {
         }
         return key;
     }
+
 }
