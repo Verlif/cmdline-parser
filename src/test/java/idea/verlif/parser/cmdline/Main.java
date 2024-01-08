@@ -1,8 +1,10 @@
 package idea.verlif.parser.cmdline;
 
+import idea.verlif.parser.cmdline.argparser.ColonArgParser;
 import idea.verlif.parser.cmdline.argparser.HtmlUrlArgParser;
 import idea.verlif.parser.cmdline.argparser.PrefixWithConfigArgParser;
 import idea.verlif.parser.cmdline.argparser.SamplePrefixArgParser;
+import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,8 +50,16 @@ public class Main {
         argValues.add("allowed", null);
         parser.exec(argValues);
         // 甚至相当于这样
-        parser.setArgParser(new HtmlUrlArgParser());
+        HtmlUrlArgParser htmlUrlArgParser = new HtmlUrlArgParser();
+        ArgValues values = htmlUrlArgParser.parseLine("https://www.baidu.com/s?ie=UTF-8&wd=%E5%86%92%E5%8F%B7%20%E8%8B%B1%E6%96%87");
+        System.out.println(values);
+        parser.setArgParser(htmlUrlArgParser);
         parser.exec("127.0.0.1:81/queue/queue?a&b&c&username=Verlif&commit=hello world&allowed");
     }
 
+    @Test
+    public void colonArgParser() {
+        ColonArgParser colonArgParser = new ColonArgParser('-');
+        System.out.println(colonArgParser.parseLine("abc-123 def-\"123 321\""));
+    }
 }

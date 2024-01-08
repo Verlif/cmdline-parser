@@ -106,7 +106,7 @@ public class CmdlineParser {
             return;
         }
         cmdline = cmdline.trim();
-        if (cmdline.length() == 0) {
+        if (cmdline.isEmpty()) {
             return;
         }
         ArgValues argValues = argParser.parseLine(cmdline.trim());

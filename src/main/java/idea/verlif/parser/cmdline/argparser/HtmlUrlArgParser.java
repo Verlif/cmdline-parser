@@ -3,6 +3,9 @@ package idea.verlif.parser.cmdline.argparser;
 import idea.verlif.parser.cmdline.ArgParser;
 import idea.verlif.parser.cmdline.ArgValues;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+
 /**
  * 简单的HTMLUrl参数解析器
  *
@@ -27,7 +30,17 @@ public class HtmlUrlArgParser implements ArgParser {
             if (i == -1) {
                 argValues.add(param, null);
             } else {
-                argValues.add(param.substring(0, i), param.substring(i + 1));
+                String key = param.substring(0, i);
+                try {
+                    key = URLDecoder.decode(key, "UTF-8");
+                } catch (UnsupportedEncodingException ignored) {
+                }
+                String value = param.substring(i + 1);
+                try {
+                    value = URLDecoder.decode(value, "UTF-8");
+                } catch (UnsupportedEncodingException ignored) {
+                }
+                argValues.add(key, value);
             }
         }
         return argValues;

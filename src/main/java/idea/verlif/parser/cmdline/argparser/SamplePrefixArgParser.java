@@ -23,7 +23,7 @@ public class SamplePrefixArgParser implements ArgParser {
 
     @Override
     public ArgValues parseLine(String line) {
-        return parser(lineToArray(line));
+        return parser(lineToArray(line, ' '));
     }
 
     /**
@@ -52,45 +52,6 @@ public class SamplePrefixArgParser implements ArgParser {
             }
         }
         return argValues;
-    }
-
-    /**
-     * 将一行数据转换成指令参数数组
-     *
-     * @param line 行字符串
-     * @return 指令参数数组
-     */
-    public String[] lineToArray(String line) {
-        ArrayList<String> list = new ArrayList<>();
-        boolean isOneParam = false;
-        StringBuilder sb = new StringBuilder();
-        for (char c : line.toCharArray()) {
-            if (isOneParam) {
-                if (c == '\"') {
-                    isOneParam = false;
-                    list.add(sb.toString());
-                    sb.delete(0, sb.length());
-                } else {
-                    sb.append(c);
-                }
-            } else {
-                if (c == '\"') {
-                    isOneParam = true;
-                } else if (c == ' ') {
-                    if (sb.length() > 0) {
-                        list.add(sb.toString());
-                        sb.delete(0, sb.length());
-                    }
-                } else {
-                    sb.append(c);
-                }
-            }
-        }
-        if (sb.length() > 0) {
-            list.add(sb.toString());
-            sb.delete(0, sb.length());
-        }
-        return list.toArray(new String[]{});
     }
 
     protected String getKeyFromArg(String arg) {

@@ -5,7 +5,7 @@ import idea.verlif.parser.cmdline.ArgValues;
 /**
  * 带配置的前缀参数解析器。<br>
  * 例如：-sgSb --username Verlif --password 12345..<br>
- * 这里有参数"a", "b", "c"，"username", "password"，其中前三个是无值参数，后两个参数值分别为"Verlif"和"12345.."
+ * 这里有参数"s", "g", "S"，"b", "username", "password"，其中前四个是无值参数，后两个参数值分别为"Verlif"和"12345.."
  *
  * @author Verlif
  */

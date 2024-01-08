@@ -69,7 +69,7 @@ public class ArgValues implements Iterable<String> {
 
     @Override
     public String toString() {
-        if (keys.size() > 0) {
+        if (!keys.isEmpty()) {
             StringBuilder sb = new StringBuilder();
             sb.append("ArgValues[");
             for (int i = 0; i < keys.size(); i++) {
