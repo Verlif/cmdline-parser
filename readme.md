@@ -7,49 +7,64 @@
 --username Verlif --commit "hello world!" --allowed
 ```
 
-总的来说就是：__解析字符串，执行对应方法__
+解析出来就是这样的数据表：
+
+| 指令key    | 指令值         |
+|----------|-------------|
+| username | Verlif      |
+| commit   | hello world |
+| allowed  | `null`      |
+
+并且可以自定义每个指令key执行的操作。
 
 ## 使用
 
 ```java
-String line = "-abc --username Verlif --commit \"hello world!\" --allowed";
-CmdlineParser parser = new CmdlineParser();
-// 忽略未知命令，否则会抛出UnknownCmdKeyException异常
-parser.ignoreUnknownKey();
-// 忽略关键词大小写，可以让"--KEy"也能匹配到"key"
-parser.ignoreCase();
-// 设置参数解析器
-parser.setArgParser(new PrefixWithConfigArgParser("--"));
-// 添加指令执行器
-parser.addHandler("username", param -> {
-    System.out.println("所以username是 - "  + param);
-});
-parser.addHandler("allowed", param -> {
-    System.out.println("所以allowed是 - "  + param);
-});
-parser.addHandler("a", param -> {
-    System.out.println("这里是a - " + param);
-});
-parser.addHandler("b", param -> {
-    System.out.println("这里是b - " + param);
-});
-parser.addHandler("c", param -> {
-    System.out.println("这里是c - " + param);
-});
-// 执行指令
-parser.exec(line);
-// 上方指令结果与下方相同
-ArgValues argValues = new ArgValues();
-argValues.add("a", null);
-argValues.add("b", null);
-argValues.add("c", null);
-argValues.add("username", "Verlif");
-argValues.add("commit", "hello world!");
-argValues.add("allowed", null);
-parser.exec(argValues);
-// 甚至相当于这样
-parser.setArgParser(new HtmlUrlArgParser());
-parser.exec("127.0.0.1:81/queue/queue?a&b&c&username=Verlif&commit=hello world&allowed");
+public class Main {
+
+   public static void main(String[] args) {
+      String line = "-abc --username Verlif --commit \"hello world!\" --allowed";
+      CmdlineParser parser = new CmdlineParser();
+      // 忽略未知命令，否则会抛出UnknownCmdKeyException异常
+      parser.ignoreUnknownKey();
+      // 忽略关键词大小写，可以让"--KEy"也能匹配到"key"
+      parser.ignoreCase();
+      // 添加指令执行器
+      parser.setArgParser(new PrefixWithConfigArgParser("--"));
+      parser.addHandler("username", param -> {
+         System.out.println("解析到username - "  + param);
+      });
+      parser.addHandler("allowed", param -> {
+         System.out.println("解析到allowed - "  + param);
+      });
+      parser.addHandler("a", param -> {
+         System.out.println("解析到a - " + param);
+      });
+      parser.addHandler("b", param -> {
+         System.out.println("解析到 - " + param);
+      });
+      parser.addHandler("c", param -> {
+         System.out.println("解析到 - " + param);
+      });
+      // 执行指令
+      parser.exec(line);
+      // 上方指令结果与下方相同
+      ArgValues argValues = new ArgValues();
+      argValues.add("a", null);
+      argValues.add("b", null);
+      argValues.add("c", null);
+      argValues.add("username", "Verlif");
+      argValues.add("commit", "hello world!");
+      argValues.add("allowed", null);
+      parser.exec(argValues);
+      // 甚至相当于这样
+      HtmlUrlArgParser htmlUrlArgParser = new HtmlUrlArgParser();
+      parser.setArgParser(htmlUrlArgParser);
+      parser.exec("127.0.0.1:81/queue/queue?a&b&c&username=Verlif&commit=hello world&allowed");
+   }
+
+}
+
 ```
 
 执行结果如下：
@@ -57,11 +72,11 @@ parser.exec("127.0.0.1:81/queue/queue?a&b&c&username=Verlif&commit=hello world&a
 *以下内容输出3次*
 
 ```text
-这里是a - null
-这里是b - null
-这里是c - null
-所以username是 - Verlif
-所以allowed是 - null
+解析到a - null
+解析到 - null
+解析到 - null
+解析到username - Verlif
+解析到allowed - null
 ```
 
 ## 自定义

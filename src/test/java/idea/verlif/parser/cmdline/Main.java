@@ -24,19 +24,19 @@ public class Main {
         // 添加指令执行器
         parser.setArgParser(new PrefixWithConfigArgParser("--"));
         parser.addHandler("username", param -> {
-            System.out.println("所以username是 - "  + param);
+            System.out.println("解析到username - "  + param);
         });
         parser.addHandler("allowed", param -> {
-            System.out.println("所以allowed是 - "  + param);
+            System.out.println("解析到allowed - "  + param);
         });
         parser.addHandler("a", param -> {
-            System.out.println("这里是a - " + param);
+            System.out.println("解析到a - " + param);
         });
         parser.addHandler("b", param -> {
-            System.out.println("这里是b - " + param);
+            System.out.println("解析到 - " + param);
         });
         parser.addHandler("c", param -> {
-            System.out.println("这里是c - " + param);
+            System.out.println("解析到 - " + param);
         });
         // 执行指令
         parser.exec(line);
@@ -51,15 +51,31 @@ public class Main {
         parser.exec(argValues);
         // 甚至相当于这样
         HtmlUrlArgParser htmlUrlArgParser = new HtmlUrlArgParser();
-        ArgValues values = htmlUrlArgParser.parseLine("https://www.baidu.com/s?ie=UTF-8&wd=%E5%86%92%E5%8F%B7%20%E8%8B%B1%E6%96%87");
-        System.out.println(values);
         parser.setArgParser(htmlUrlArgParser);
         parser.exec("127.0.0.1:81/queue/queue?a&b&c&username=Verlif&commit=hello world&allowed");
+    }
+
+    @Test
+    public void samplePrefixArgParser() {
+        SamplePrefixArgParser argParser = new SamplePrefixArgParser("--");
+        System.out.println(argParser.parseLine("-abcd --name Verlif --password \"pass word\""));
+    }
+
+    @Test
+    public void prefixWithConfigArgParser() {
+        PrefixWithConfigArgParser argParser = new PrefixWithConfigArgParser("--");
+        System.out.println(argParser.parseLine("-abcd --name Verlif --password \"pass word\""));
     }
 
     @Test
     public void colonArgParser() {
         ColonArgParser colonArgParser = new ColonArgParser('-');
         System.out.println(colonArgParser.parseLine("abc-123 def-\"123 321\""));
+    }
+
+    @Test
+    public void HtmlUrlArgParser() {
+        HtmlUrlArgParser htmlUrlArgParser = new HtmlUrlArgParser();
+        System.out.println(htmlUrlArgParser.parseLine("https://www.baidu.com/s?ie=UTF-8&wd=%E5%86%92%E5%8F%B7%20%E8%8B%B1%E6%96%87"));
     }
 }
